@@ -35,7 +35,7 @@
 #### Зачёт от 7 баллов
 
 ### Подсказки
-- https://golang.org/ref/spec#String_literals
+- https://golang.org/ref/spec#String_lite4rals
 - `strings.Builder`
 - `strings.Repeat`
 - `strconv.Atoi`
