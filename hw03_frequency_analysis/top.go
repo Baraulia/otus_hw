@@ -12,7 +12,7 @@ var (
 )
 
 func Top10(enterString string) []string {
-	taskWithAsterisk = true // change to true for the task with an asterisk
+	taskWithAsterisk = false // change to true for the task with an asterisk
 	var sliceStr []string
 	uniqueWordsMap := make(map[string]int)
 	switch taskWithAsterisk {
