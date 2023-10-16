@@ -6,8 +6,10 @@ import (
 	"strings"
 )
 
-var taskWithAsterisk bool
-var wordPatternAnySymbol = regexp.MustCompile(`\S+`)
+var (
+	taskWithAsterisk     bool
+	wordPatternAnySymbol = regexp.MustCompile(`\S+`)
+)
 
 func Top10(enterString string) []string {
 	taskWithAsterisk = true // change to true for the task with an asterisk
@@ -27,7 +29,7 @@ func Top10(enterString string) []string {
 		}
 	default:
 		sliceStr = strings.Fields(enterString)
-		_ = wordPatternAnySymbol.FindAllString(enterString, -1) //can be used instead of the  strings.Fields()
+		_ = wordPatternAnySymbol.FindAllString(enterString, -1) // can be used instead of the  strings.Fields()
 
 		for _, word := range sliceStr {
 			uniqueWordsMap[word]++
