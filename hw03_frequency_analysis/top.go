@@ -1,20 +1,14 @@
 package hw03frequencyanalysis
 
 import (
-	"regexp"
 	"sort"
 	"strings"
-)
-
-var (
-	wordPatternAnySymbol = regexp.MustCompile(`\S+`)
 )
 
 func Top10(enterString string) []string {
 	var sliceStr []string
 	uniqueWordsMap := make(map[string]int)
 	sliceStr = strings.Fields(enterString)
-	_ = wordPatternAnySymbol.FindAllString(enterString, -1) // can be used instead of the  strings.Fields()
 
 	for _, word := range sliceStr {
 		uniqueWordsMap[word]++
