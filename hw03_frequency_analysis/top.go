@@ -7,33 +7,17 @@ import (
 )
 
 var (
-	taskWithAsterisk     bool
 	wordPatternAnySymbol = regexp.MustCompile(`\S+`)
 )
 
 func Top10(enterString string) []string {
-	taskWithAsterisk = false // change to true for the task with an asterisk
 	var sliceStr []string
 	uniqueWordsMap := make(map[string]int)
-	switch taskWithAsterisk {
-	case true:
-		sliceStr = wordPatternAnySymbol.FindAllString(enterString, -1)
-		for _, word := range sliceStr {
-			if word == "-" {
-				continue
-			}
+	sliceStr = strings.Fields(enterString)
+	_ = wordPatternAnySymbol.FindAllString(enterString, -1) // can be used instead of the  strings.Fields()
 
-			word = cleanWord(word)
-			word = strings.ToLower(word)
-			uniqueWordsMap[word]++
-		}
-	default:
-		sliceStr = strings.Fields(enterString)
-		_ = wordPatternAnySymbol.FindAllString(enterString, -1) // can be used instead of the  strings.Fields()
-
-		for _, word := range sliceStr {
-			uniqueWordsMap[word]++
-		}
+	for _, word := range sliceStr {
+		uniqueWordsMap[word]++
 	}
 
 	uniqueSliceStr := make([]string, 0, len(uniqueWordsMap))
@@ -60,12 +44,4 @@ func Top10(enterString string) []string {
 	}
 
 	return uniqueSliceStr
-}
-
-func cleanWord(word string) string {
-	cleanedWord := strings.TrimFunc(word, func(r rune) bool {
-		return strings.ContainsRune(".,!;", r)
-	})
-
-	return cleanedWord
 }
