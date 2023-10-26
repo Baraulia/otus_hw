@@ -29,10 +29,12 @@ func (c *lruCache) Set(key Key, value interface{}) bool {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	val, ok := c.items[key]
-	if ok {
+
+	switch ok {
+	case true:
 		val.Value = value
 		c.queue.Front()
-	} else {
+	case false:
 		newItem := c.queue.PushFront(value)
 		c.items[key] = newItem
 		if len(c.items) > c.capacity {
