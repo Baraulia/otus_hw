@@ -71,6 +71,7 @@ func (l *list) PushBack(v interface{}) *ListItem {
 
 	return newItem
 }
+
 func (l *list) Remove(i *ListItem) {
 	defer func() {
 		l.len--
