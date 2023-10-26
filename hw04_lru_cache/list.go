@@ -95,15 +95,14 @@ func (l *list) MoveToFront(i *ListItem) {
 		return
 	}
 
-	switch i.Next == nil {
-	case true:
+	if i.Next == nil {
 		i.Prev.Next = nil
 		l.back = i.Prev
 		i.Next = l.front
 		l.front.Prev = i
 		i.Prev = nil
 		l.front = i
-	case false:
+	} else {
 		i.Prev.Next = i.Next
 		i.Next.Prev = i.Prev
 		i.Next = l.front
