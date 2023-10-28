@@ -1,6 +1,9 @@
 package hw04lrucache
 
-import "sync"
+import (
+	"log"
+	"sync"
+)
 
 type Key string
 
@@ -17,6 +20,11 @@ type lruCache struct {
 	mu       sync.Mutex
 }
 
+type Value struct {
+	key   Key
+	value interface{}
+}
+
 func NewCache(capacity int) Cache {
 	return &lruCache{
 		capacity: capacity,
@@ -30,17 +38,26 @@ func (c *lruCache) Set(key Key, value interface{}) bool {
 	defer c.mu.Unlock()
 	val, ok := c.items[key]
 
+	prepValue := Value{
+		key:   key,
+		value: value,
+	}
+
 	switch ok {
 	case true:
-		val.Value = value
-		c.queue.Front()
+		val.Value = prepValue
+		c.queue.MoveToFront(val)
 	case false:
-		newItem := c.queue.PushFront(value)
+		newItem := c.queue.PushFront(prepValue)
 		c.items[key] = newItem
 		if len(c.items) > c.capacity {
 			back := c.queue.Back()
+			v, successfully := back.Value.(Value)
+			if !successfully {
+				log.Println("setting error: unsupported value type")
+			}
+			delete(c.items, v.key)
 			c.queue.Remove(back)
-			c.deleteFromMap(back)
 		}
 	}
 
@@ -53,7 +70,14 @@ func (c *lruCache) Get(key Key) (interface{}, bool) {
 	var val interface{}
 	item, ok := c.items[key]
 	if ok {
-		val = item.Value
+		switch v := item.Value.(type) {
+		case Value:
+			val = v.value
+		default:
+			log.Println("getting error: unsupported value type")
+			val = nil
+		}
+
 		c.queue.PushFront(item)
 	}
 
@@ -65,12 +89,4 @@ func (c *lruCache) Clear() {
 	defer c.mu.Unlock()
 	c.items = make(map[Key]*ListItem, c.capacity)
 	c.queue = NewList()
-}
-
-func (c *lruCache) deleteFromMap(value *ListItem) {
-	for k, v := range c.items {
-		if v == value {
-			delete(c.items, k)
-		}
-	}
 }
