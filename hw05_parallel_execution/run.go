@@ -71,14 +71,14 @@ func (p *WorkingPool) startWorker() {
 func (p *WorkingPool) addTasks() {
 	defer p.wg.Done()
 	for _, task := range p.tasks {
-		if p.numberCompletedTasks >= p.commonNumberTasks {
+		if atomic.LoadInt32(&p.numberCompletedTasks) >= p.commonNumberTasks {
 			close(p.quit)
 			close(p.tasksChan)
 			p.quitError = nil
 			return
 		}
 
-		if p.numberError >= p.maxErrors {
+		if atomic.LoadInt32(&p.numberError) >= p.maxErrors {
 			close(p.quit)
 			close(p.tasksChan)
 			p.quitError = ErrErrorsLimitExceeded

@@ -134,7 +134,10 @@ func TestRun(t *testing.T) {
 		}()
 
 		require.Eventually(t, func() bool {
-			return len(checkMap) > 1
+			mu.Lock()
+			lenMap := len(checkMap)
+			mu.Unlock()
+			return lenMap > 1
 		}, 5*time.Second, 100*time.Millisecond, "Tasks not executed concurrently")
 		wg.Wait()
 		close(chError)
