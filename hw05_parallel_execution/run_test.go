@@ -102,8 +102,8 @@ func TestRun(t *testing.T) {
 	})
 
 	t.Run("with zero value in m", func(t *testing.T) {
-		var checkMap = make(map[string]struct{})
-		var mu = sync.Mutex{}
+		checkMap := make(map[string]struct{})
+		mu := sync.Mutex{}
 		chError := make(chan error)
 		tasksCount := 50
 		tasks := make([]Task, 0, tasksCount)
@@ -131,7 +131,6 @@ func TestRun(t *testing.T) {
 			if err != nil {
 				chError <- err
 			}
-			return
 		}()
 
 		require.Eventually(t, func() bool {

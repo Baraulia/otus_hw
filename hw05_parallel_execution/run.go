@@ -13,9 +13,7 @@ type Task func() error
 type WorkingPool struct {
 	tasks                []Task
 	maxErrors            int32
-	tasksMU              sync.RWMutex
 	numberCompletedTasks int32
-	errorsMU             sync.RWMutex
 	numberError          int32
 	commonNumberTasks    int32
 	tasksChan            chan Task
@@ -30,9 +28,7 @@ func Run(tasks []Task, n, m int) error {
 	pool := &WorkingPool{
 		tasks:                tasks,
 		maxErrors:            int32(m),
-		tasksMU:              sync.RWMutex{},
 		numberCompletedTasks: int32(numberCompletedTask),
-		errorsMU:             sync.RWMutex{},
 		numberError:          int32(numberError),
 		commonNumberTasks:    int32(len(tasks)),
 		tasksChan:            make(chan Task),
