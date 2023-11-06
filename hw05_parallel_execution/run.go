@@ -12,9 +12,9 @@ type Task func() error
 type WorkingPool struct {
 	tasks                []Task
 	maxErrors            int
-	tasksMU              sync.Mutex
+	tasksMU              sync.RWMutex
 	numberCompletedTasks int
-	errorsMU             sync.Mutex
+	errorsMU             sync.RWMutex
 	numberError          int
 	commonNumberTasks    int
 	tasksChan            chan Task
@@ -29,9 +29,9 @@ func Run(tasks []Task, n, m int) error {
 	pool := &WorkingPool{
 		tasks:                tasks,
 		maxErrors:            m,
-		tasksMU:              sync.Mutex{},
+		tasksMU:              sync.RWMutex{},
 		numberCompletedTasks: numberCompletedTask,
-		errorsMU:             sync.Mutex{},
+		errorsMU:             sync.RWMutex{},
 		numberError:          numberError,
 		commonNumberTasks:    len(tasks),
 		tasksChan:            make(chan Task),
@@ -78,18 +78,22 @@ func (p *WorkingPool) startWorker() {
 func (p *WorkingPool) addTasks() {
 	defer p.wg.Done()
 	for _, task := range p.tasks {
+		p.tasksMU.RLock()
 		if p.numberCompletedTasks >= p.commonNumberTasks {
 			close(p.quit)
 			close(p.tasksChan)
 			p.quitError = nil
 			return
 		}
+		p.tasksMU.RUnlock()
+		p.errorsMU.RLock()
 		if p.numberError >= p.maxErrors {
 			close(p.quit)
 			close(p.tasksChan)
 			p.quitError = ErrErrorsLimitExceeded
 			return
 		}
+		p.errorsMU.RUnlock()
 
 		p.tasksChan <- task
 	}
