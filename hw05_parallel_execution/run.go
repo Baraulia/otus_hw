@@ -11,29 +11,25 @@ var ErrErrorsLimitExceeded = errors.New("errors limit exceeded")
 type Task func() error
 
 type WorkingPool struct {
-	tasks                []Task
-	maxErrors            int32
-	numberCompletedTasks int32
-	numberError          int32
-	commonNumberTasks    int32
-	tasksChan            chan Task
-	quit                 chan struct{}
-	quitError            error
-	wg                   *sync.WaitGroup
+	tasks       []Task
+	maxErrors   int32
+	numberError int32
+	tasksChan   chan Task
+	quit        chan struct{}
+	quitError   error
+	wg          *sync.WaitGroup
 }
 
 // Run starts tasks in n goroutines and stops its work when receiving m errors from tasks.
 func Run(tasks []Task, n, m int) error {
-	var numberCompletedTask, numberError int
+	var numberError int
 	pool := &WorkingPool{
-		tasks:                tasks,
-		maxErrors:            int32(m),
-		numberCompletedTasks: int32(numberCompletedTask),
-		numberError:          int32(numberError),
-		commonNumberTasks:    int32(len(tasks)),
-		tasksChan:            make(chan Task),
-		quit:                 make(chan struct{}),
-		wg:                   &sync.WaitGroup{},
+		tasks:       tasks,
+		maxErrors:   int32(m),
+		numberError: int32(numberError),
+		tasksChan:   make(chan Task),
+		quit:        make(chan struct{}),
+		wg:          &sync.WaitGroup{},
 	}
 
 	if pool.maxErrors <= 0 {
@@ -45,8 +41,7 @@ func Run(tasks []Task, n, m int) error {
 		go pool.startWorker()
 	}
 
-	pool.wg.Add(1)
-	go pool.addTasks()
+	pool.addTasks()
 	pool.wg.Wait()
 	return pool.quitError
 }
@@ -57,7 +52,6 @@ func (p *WorkingPool) startWorker() {
 		select {
 		case task, ok := <-p.tasksChan:
 			if ok {
-				atomic.AddInt32(&p.numberCompletedTasks, 1)
 				if err := task(); err != nil {
 					atomic.AddInt32(&p.numberError, 1)
 				}
@@ -69,15 +63,7 @@ func (p *WorkingPool) startWorker() {
 }
 
 func (p *WorkingPool) addTasks() {
-	defer p.wg.Done()
 	for _, task := range p.tasks {
-		if atomic.LoadInt32(&p.numberCompletedTasks) >= p.commonNumberTasks {
-			close(p.quit)
-			close(p.tasksChan)
-			p.quitError = nil
-			return
-		}
-
 		if atomic.LoadInt32(&p.numberError) >= p.maxErrors {
 			close(p.quit)
 			close(p.tasksChan)
