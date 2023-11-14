@@ -31,7 +31,7 @@ func ExecutePipeline(in In, done In, stages ...Stage) Out {
 		}(in, out, done)
 
 		wg.Wait()
-		//time.Sleep(time.Millisecond * 1)
+		// time.Sleep(time.Millisecond * 1)
 		in = stage(out)
 	}
 
