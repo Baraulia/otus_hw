@@ -38,7 +38,7 @@ func Copy(fromPath, toPath string, offset, limit int64) error {
 
 	fileSize := fileInfo.Size()
 
-	if limit > fileSize {
+	if offset > fileSize {
 		return ErrOffsetExceedsFileSize
 	}
 
