@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"log/slog"
+	"log"
 )
 
 var (
@@ -20,6 +20,6 @@ func init() {
 func main() {
 	flag.Parse()
 	if err := Copy(from, to, offset, limit); err != nil {
-		slog.Default().Error(err.Error(), "from", from, "to", to, "limit", limit, "offset", offset)
+		log.Panicf("error: %s; from: %s, to: %s, limit: %d, offset: %d", err.Error(), from, to, limit, offset)
 	}
 }
