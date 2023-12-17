@@ -70,7 +70,7 @@ func GetDomainStat(r io.Reader, domain string) (DomainStat, error) {
 	}()
 
 	wg.Wait()
-	wg.Add(1)
+	wg.Add(1) // wait for countDomains
 	close(emailChan)
 	close(errorChan)
 	wg.Wait()
