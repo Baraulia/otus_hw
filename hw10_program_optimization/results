@@ -1,0 +1,7 @@
+RESULTS BEFORE REFACTORING:
+- stats_optimization_test.go:46: time used: 1.130648277s / 300ms
+- stats_optimization_test.go:47: memory used: 309Mb / 30Mb
+
+RESULTS AFTER REFACTORING:
+- stats_optimization_test.go:46: time used: 292.236565ms / 300ms
+- stats_optimization_test.go:47: memory used: 20Mb / 30Mb
