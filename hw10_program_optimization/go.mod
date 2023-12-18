@@ -1,4 +1,4 @@
-module github.com/fixme_my_friend/hw10_program_optimization
+module github.com/Baraulia/otus_hw/hw09_struct_validator/hw10_program_optimization
 
 go 1.19
 
