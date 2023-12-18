@@ -101,6 +101,17 @@ func TestValidate(t *testing.T) {
 			},
 			expectedErr: ErrorNotInSlice,
 		},
+		{
+			name: "successful case for structure without validation tags",
+			in: Token{
+				Header: []byte("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"),
+				Payload: []byte("eyJhdWQiOiJyZWZyZXNoIiwiZXhwIjoxNzM0NDI0OTQ5LCJoYXNoIjoi" +
+					"YmVlMDRjZGEtNDllNS00OTA1LTg0YTItZDdkZTBjN2RlMDY4Iiwicm9sZSI6IlNVUEVSX0FETU" +
+					"lOIiwic3RhdGUiOiJBQ1RJVkUiLCJzdWIiOiIyODY3YTE5MS1lMDRlLTQyY2QtOWM1YS1jMzM3MGQ5OTE0NmQifQ"),
+				Signature: []byte("QMenFBGoWgYBNT7bdyaAUodQ957b_AcHDAc6gLltJkU"),
+			},
+			expectedErr: nil,
+		},
 	}
 
 	for _, tt := range tests {

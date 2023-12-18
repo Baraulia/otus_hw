@@ -19,10 +19,6 @@ var (
 
 const tagName = "validate"
 
-type Element interface {
-	~string | ~int
-}
-
 type ValidationError struct {
 	Field string
 	Err   error
