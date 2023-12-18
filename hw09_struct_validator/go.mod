@@ -1,4 +1,4 @@
-module github.com/Baraulia/otus_hw/tree/master/hw09_struct_validator
+module github.com/Baraulia/otus_hw/hw09_struct_validator
 
 go 1.19
 
