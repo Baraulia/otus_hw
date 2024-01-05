@@ -1,8 +1,10 @@
 package main
 
-// При желании конфигурацию можно вынести в internal/config.
-// Организация конфига в main принуждает нас сужать API компонентов, использовать
-// при их конструировании только необходимые параметры, а также уменьшает вероятность циклической зависимости.
+import (
+	"fmt"
+	"github.com/spf13/viper"
+)
+
 type Config struct {
 	Logger LoggerConf
 	// TODO
@@ -13,8 +15,17 @@ type LoggerConf struct {
 	// TODO
 }
 
-func NewConfig() Config {
-	return Config{}
-}
+func NewConfig(path string) (Config, error) {
+	var conf Config
+	viper.SetConfigFile(path)
 
-// TODO
+	if err := viper.ReadInConfig(); err != nil {
+		return conf, fmt.Errorf("error while reading cinfig file: %s", err)
+	}
+
+	if err := viper.Unmarshal(&conf); err != nil {
+		return conf, fmt.Errorf("error while unmarshaling config: %s", err)
+	}
+
+	return conf, nil
+}

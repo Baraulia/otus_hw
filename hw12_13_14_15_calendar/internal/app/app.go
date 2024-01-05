@@ -2,19 +2,34 @@ package app
 
 import (
 	"context"
+	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/models"
+	"time"
 )
 
-type App struct { // TODO
+type App struct {
+	logger  Logger
+	storage Storage
 }
 
-type Logger interface { // TODO
+type Logger interface {
+	Debug(msg string, fields map[string]interface{})
+	Info(msg string, fields map[string]interface{})
+	Warn(msg string, fields map[string]interface{})
+	Error(msg string, fields map[string]interface{})
+	Fatal(msg string, fields map[string]interface{})
 }
 
-type Storage interface { // TODO
+type Storage interface {
+	CreateEvent(ctx context.Context, eventDTO models.Event) (string, error)
+	UpdateEvent(ctx context.Context, eventDTO models.Event) error
+	DeleteEvent(ctx context.Context, id string) error
+	GetListEventsDuringDay(ctx context.Context, day time.Time) ([]models.Event, error)
+	GetListEventsDuringWeek(ctx context.Context, start time.Time) ([]models.Event, error)
+	GetListEventsDuringMonth(ctx context.Context, start time.Time) ([]models.Event, error)
 }
 
 func New(logger Logger, storage Storage) *App {
-	return &App{}
+	return &App{logger: logger, storage: storage}
 }
 
 func (a *App) CreateEvent(ctx context.Context, id, title string) error {
