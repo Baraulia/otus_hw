@@ -2,9 +2,10 @@ package logger
 
 import (
 	"context"
-	"github.com/stretchr/testify/require"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewLogger(t *testing.T) {
@@ -12,12 +13,12 @@ func TestNewLogger(t *testing.T) {
 		level         string
 		expectedError bool
 	}{
-		{"debug", false},
-		{"info", false},
-		{"warn", false},
-		{"error", false},
-		{"panic", false},
-		{"fatal", false},
+		{"DEBUG", false},
+		{"INFO", false},
+		{"WARN", false},
+		{"ERROR", false},
+		{"PANIC", false},
+		{"FATAL", false},
 		{"invalid", true},
 	}
 
@@ -39,7 +40,7 @@ func TestLoggerWithCustomContext(t *testing.T) {
 	logger, err := GetLogger("debug")
 	require.NoError(t, err)
 	ctx := ContextWithLogger(context.Background(), logger)
-	require.NotNil(t, ctx.Value("logger"), "Expected logger in context")
+	require.NotNil(t, ctx.Value(KeyLogger("logger")), "Expected logger in context")
 
 	retrievedLogger, _ := GetLoggerFromContext(ctx)
 	require.NotNil(t, retrievedLogger, "Expected logger retrieved from context")

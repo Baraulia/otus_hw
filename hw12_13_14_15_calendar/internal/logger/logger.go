@@ -3,10 +3,12 @@ package logger
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
 	"log"
 	"os"
+	"strings"
+
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 type ZapLogger struct {
@@ -14,20 +16,23 @@ type ZapLogger struct {
 	file   *os.File
 }
 
+type KeyLogger string
+
 func GetLogger(level string) (*ZapLogger, error) {
+	level = strings.ToUpper(level)
 	var zapLevel zapcore.Level
 	switch level {
-	case "debug":
+	case "DEBUG":
 		zapLevel = zapcore.DebugLevel
-	case "info":
+	case "INFO":
 		zapLevel = zapcore.InfoLevel
-	case "warn":
+	case "WARN":
 		zapLevel = zapcore.WarnLevel
-	case "error":
+	case "ERROR":
 		zapLevel = zapcore.ErrorLevel
-	case "panic":
+	case "PANIC":
 		zapLevel = zapcore.PanicLevel
-	case "fatal":
+	case "FATAL":
 		zapLevel = zapcore.FatalLevel
 	default:
 		return nil, fmt.Errorf("unsupported level of logger: %s", level)
@@ -63,11 +68,11 @@ func GetLogger(level string) (*ZapLogger, error) {
 }
 
 func ContextWithLogger(ctx context.Context, logger *ZapLogger) context.Context {
-	return context.WithValue(ctx, "logger", logger)
+	return context.WithValue(ctx, KeyLogger("logger"), logger)
 }
 
 func GetLoggerFromContext(ctx context.Context) (*ZapLogger, error) {
-	if l, ok := ctx.Value("logger").(*ZapLogger); ok {
+	if l, ok := ctx.Value(KeyLogger("logger")).(*ZapLogger); ok {
 		return l, nil
 	}
 
@@ -86,17 +91,17 @@ func (l *ZapLogger) Debug(msg string, fields map[string]interface{}) {
 }
 
 func (l *ZapLogger) Info(msg string, fields map[string]interface{}) {
-	l.logger.Info(msg, zap.Any("args", fields))
+	l.logger.Infow(msg, zap.Any("args", fields))
 }
 
 func (l *ZapLogger) Warn(msg string, fields map[string]interface{}) {
-	l.logger.Warn(msg, zap.Any("args", fields))
+	l.logger.Warnw(msg, zap.Any("args", fields))
 }
 
 func (l *ZapLogger) Error(msg string, fields map[string]interface{}) {
-	l.logger.Error(msg, zap.Any("args", fields))
+	l.logger.Errorw(msg, zap.Any("args", fields))
 }
 
 func (l *ZapLogger) Fatal(msg string, fields map[string]interface{}) {
-	l.logger.Fatal(msg, zap.Any("args", fields))
+	l.logger.Fatalw(msg, zap.Any("args", fields))
 }

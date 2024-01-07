@@ -1,5 +1,4 @@
 logger:
   level: INFO
-
-# TODO
-# ...
+sql:
+  migrationsPath: "./migrations"

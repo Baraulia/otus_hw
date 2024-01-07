@@ -1,9 +1,11 @@
 package app
 
+//nolint:depguard
 import (
 	"context"
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/models"
 	"time"
+
+	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/models"
 )
 
 type App struct {
@@ -24,14 +26,15 @@ type Storage interface {
 	UpdateEvent(ctx context.Context, eventDTO models.Event) error
 	DeleteEvent(ctx context.Context, id string) error
 	GetListEventsDuringDay(ctx context.Context, day time.Time) ([]models.Event, error)
-	GetListEventsDuringWeek(ctx context.Context, start time.Time) ([]models.Event, error)
-	GetListEventsDuringMonth(ctx context.Context, start time.Time) ([]models.Event, error)
+	GetListEventsDuringFewDays(ctx context.Context, start time.Time, amountDays int) ([]models.Event, error)
+	Close()
 }
 
 func New(logger Logger, storage Storage) *App {
 	return &App{logger: logger, storage: storage}
 }
 
+//nolint:revive
 func (a *App) CreateEvent(ctx context.Context, id, title string) error {
 	// TODO
 	return nil

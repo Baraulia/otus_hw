@@ -3,11 +3,11 @@ package models
 import "time"
 
 type Event struct {
-	ID                string
-	Header            string
-	EventTime         time.Time
-	EventDuration     time.Duration
-	Description       string
-	UserID            string
-	InAdvanceDuration time.Duration
+	ID               string
+	Header           string
+	Description      string
+	UserID           string
+	EventTime        time.Time
+	FinishEventTime  time.Time
+	NotificationTime time.Time
 }

@@ -1,30 +1,45 @@
 package main
 
+//nolint:depguard
 import (
 	"fmt"
+
 	"github.com/spf13/viper"
 )
 
 type Config struct {
 	Logger LoggerConf
-	// TODO
+	SQL    SQLConf
 }
 
 type LoggerConf struct {
-	Level string
-	// TODO
+	Level string `mapstructure:"level" default:"INFO"`
+}
+
+type SQLConf struct {
+	Username       string `mapstructure:"userName"`
+	Password       string `mapstructure:"password"`
+	Host           string `mapstructure:"host"`
+	Port           string `mapstructure:"port"`
+	Database       string `mapstructure:"database"`
+	MigrationsPath string `mapstructure:"migrationsPath"`
 }
 
 func NewConfig(path string) (Config, error) {
 	var conf Config
+	viper.SetDefault("SQL.Username", "postgres")
+	viper.SetDefault("SQL.Password", "password")
+	viper.SetDefault("SQL.Host", "0.0.0.0")
+	viper.SetDefault("SQL.Port", "5435")
+	viper.SetDefault("SQL.Database", "backend")
 	viper.SetConfigFile(path)
 
 	if err := viper.ReadInConfig(); err != nil {
-		return conf, fmt.Errorf("error while reading cinfig file: %s", err)
+		return conf, fmt.Errorf("error while reading config file: %w", err)
 	}
 
 	if err := viper.Unmarshal(&conf); err != nil {
-		return conf, fmt.Errorf("error while unmarshaling config: %s", err)
+		return conf, fmt.Errorf("error while unmarshaling config: %w", err)
 	}
 
 	return conf, nil

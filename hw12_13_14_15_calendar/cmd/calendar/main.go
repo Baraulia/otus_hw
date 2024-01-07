@@ -1,5 +1,6 @@
 package main
 
+//nolint:depguard
 import (
 	"context"
 	"flag"
@@ -13,12 +14,17 @@ import (
 	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/logger"
 	internalhttp "github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/server/http"
 	memorystorage "github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/storage/memory"
+	sqlstorage "github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/storage/sql"
 )
 
-var configFile string
+var (
+	configFile string
+	database   string
+)
 
 func init() {
-	flag.StringVar(&configFile, "config", "/etc/calendar/config.yaml", "Path to configuration file")
+	flag.StringVar(&configFile, "config", "./configs/config.yaml", "Path to configuration file")
+	flag.StringVar(&database, "database", "memory", "What database should we use")
 }
 
 func main() {
@@ -44,7 +50,22 @@ func main() {
 		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer cancel()
 
-	storage := memorystorage.New(logg)
+	var storage app.Storage
+
+	switch database {
+	case "memory":
+		storage = memorystorage.New(logg)
+	case "sql":
+		storage = sqlstorage.NewPostgresStorage(sqlstorage.PgConfig{
+			Host:           config.SQL.Host,
+			Username:       config.SQL.Username,
+			Password:       config.SQL.Password,
+			Port:           config.SQL.Port,
+			Database:       config.SQL.Database,
+			MigrationsPath: config.SQL.MigrationsPath,
+		}, logg)
+	}
+
 	calendar := app.New(logg, storage)
 
 	server := internalhttp.NewServer(logg, calendar)
@@ -58,6 +79,8 @@ func main() {
 		if err := server.Stop(ctx); err != nil {
 			logg.Error("failed to stop http server: "+err.Error(), nil)
 		}
+
+		storage.Close()
 	}()
 
 	logg.Info("calendar is running...", nil)
