@@ -10,9 +10,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/pkg/logger"
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/pkg/server/http"
-
 	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/app"
 	memorystorage "github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/storage/memory"
 	sqlstorage "github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/storage/sql"
