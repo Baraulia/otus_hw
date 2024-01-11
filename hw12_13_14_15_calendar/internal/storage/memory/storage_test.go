@@ -2,10 +2,10 @@ package memorystorage
 
 import (
 	"context"
+	"github.com/fixme_my_friend/hw12_13_14_15_calendar/pkg/logger"
 	"testing"
 	"time"
 
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/logger"
 	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/models"
 	"github.com/stretchr/testify/require"
 )
