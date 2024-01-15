@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/app"
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/models"
+	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/app"
+	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/models"
 	"github.com/jackc/pgx/v5/pgxpool"
 	// Empty import to ensure execution of code in the package's init function.
 	_ "github.com/lib/pq"

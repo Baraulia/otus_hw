@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/models"
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/pkg/logger"
+	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/models"
+	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/pkg/logger"
 	"github.com/stretchr/testify/require"
 )
 
