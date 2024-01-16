@@ -1,23 +1,31 @@
 package main
 
+//nolint:depguard
 import (
 	"context"
 	"flag"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/app"
-	"github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/logger"
-	internalhttp "github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/server/http"
-	memorystorage "github.com/fixme_my_friend/hw12_13_14_15_calendar/internal/storage/memory"
+	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/app"
+	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/handlers"
+	memorystorage "github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/storage/memory"
+	sqlstorage "github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/storage/sql"
+	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/pkg/logger"
+	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/pkg/server/http"
 )
 
-var configFile string
+var (
+	configFile string
+	database   string
+)
 
 func init() {
-	flag.StringVar(&configFile, "config", "/etc/calendar/config.toml", "Path to configuration file")
+	flag.StringVar(&configFile, "config", "./configs/config.yaml", "Path to configuration file")
+	flag.StringVar(&database, "database", "memory", "What database should we use")
 }
 
 func main() {
@@ -28,17 +36,40 @@ func main() {
 		return
 	}
 
-	config := NewConfig()
-	logg := logger.New(config.Logger.Level)
+	config, err := NewConfig(configFile)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	storage := memorystorage.New()
-	calendar := app.New(logg, storage)
-
-	server := internalhttp.NewServer(logg, calendar)
+	logg, err := logger.GetLogger(config.Logger.Level)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer logg.Close()
 
 	ctx, cancel := signal.NotifyContext(context.Background(),
 		syscall.SIGINT, syscall.SIGTERM, syscall.SIGHUP)
 	defer cancel()
+
+	var storage app.Storage
+
+	switch database {
+	case "memory":
+		storage = memorystorage.New(logg)
+	case "sql":
+		storage = sqlstorage.NewPostgresStorage(sqlstorage.PgConfig{
+			Host:           config.SQL.Host,
+			Username:       config.SQL.Username,
+			Password:       config.SQL.Password,
+			Port:           config.SQL.Port,
+			Database:       config.SQL.Database,
+			MigrationsPath: config.SQL.MigrationsPath,
+		}, logg)
+	}
+
+	calendar := app.New(logg, storage)
+	handler := handlers.NewHandler(logg, calendar)
+	server := internalhttp.NewServer(logg, config.HTTPServer.Host, config.HTTPServer.Port, handler.InitRoutes())
 
 	go func() {
 		<-ctx.Done()
@@ -47,14 +78,16 @@ func main() {
 		defer cancel()
 
 		if err := server.Stop(ctx); err != nil {
-			logg.Error("failed to stop http server: " + err.Error())
+			logg.Error("failed to stop http server: "+err.Error(), nil)
 		}
+
+		storage.Close()
 	}()
 
-	logg.Info("calendar is running...")
+	logg.Info("calendar is running...", nil)
 
-	if err := server.Start(ctx); err != nil {
-		logg.Error("failed to start http server: " + err.Error())
+	if err := server.Start(); err != nil {
+		logg.Error("failed to start http server: "+err.Error(), nil)
 		cancel()
 		os.Exit(1) //nolint:gocritic
 	}

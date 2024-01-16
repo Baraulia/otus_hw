@@ -1,20 +1,52 @@
 package main
 
-// При желании конфигурацию можно вынести в internal/config.
-// Организация конфига в main принуждает нас сужать API компонентов, использовать
-// при их конструировании только необходимые параметры, а также уменьшает вероятность циклической зависимости.
+//nolint:depguard
+import (
+	"fmt"
+
+	"github.com/spf13/viper"
+)
+
 type Config struct {
-	Logger LoggerConf
-	// TODO
+	Logger     LoggerConf
+	SQL        SQLConf
+	HTTPServer HTTPServerConf
 }
 
 type LoggerConf struct {
-	Level string
-	// TODO
+	Level string `mapstructure:"level" default:"INFO"`
 }
 
-func NewConfig() Config {
-	return Config{}
+type SQLConf struct {
+	Username       string `mapstructure:"userName"`
+	Password       string `mapstructure:"password"`
+	Host           string `mapstructure:"host"`
+	Port           string `mapstructure:"port"`
+	Database       string `mapstructure:"database"`
+	MigrationsPath string `mapstructure:"migrationsPath"`
 }
 
-// TODO
+type HTTPServerConf struct {
+	Host string `mapstructure:"host" default:"0.0.0.0"`
+	Port string `mapstructure:"port" default:"8080"`
+}
+
+func NewConfig(path string) (Config, error) {
+	var conf Config
+	viper.SetDefault("SQL.Username", "postgres")
+	viper.SetDefault("SQL.Password", "password")
+	viper.SetDefault("SQL.Host", "0.0.0.0")
+	viper.SetDefault("SQL.Port", "5435")
+	viper.SetDefault("SQL.Database", "backend")
+	viper.SetConfigFile(path)
+
+	if err := viper.ReadInConfig(); err != nil {
+		return conf, fmt.Errorf("error while reading config file: %w", err)
+	}
+
+	if err := viper.Unmarshal(&conf); err != nil {
+		return conf, fmt.Errorf("error while unmarshaling config: %w", err)
+	}
+
+	return conf, nil
+}
