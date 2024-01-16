@@ -3,7 +3,9 @@ module github.com/Baraulia/otus_hw/hw12_13_14_15_calendar
 go 1.21.5
 
 require (
+	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.5.0
+	github.com/gorilla/mux v1.8.1
 	github.com/jackc/pgx/v5 v5.5.1
 	github.com/lib/pq v1.10.9
 	github.com/pressly/goose v2.7.0+incompatible
@@ -13,10 +15,13 @@ require (
 )
 
 require (
+	github.com/daixiang0/gci v0.12.1 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/hexops/gotextdiff v1.0.3 // indirect
+	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20231201235250-de7065d80cb9 // indirect
 	github.com/jackc/puddle/v2 v2.2.1 // indirect
@@ -31,6 +36,7 @@ require (
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/cast v1.6.0 // indirect
+	github.com/spf13/cobra v1.8.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect

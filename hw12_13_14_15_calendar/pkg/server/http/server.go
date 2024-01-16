@@ -2,32 +2,46 @@ package internalhttp
 
 import (
 	"context"
+	"net/http"
+	"time"
 )
 
-type Server struct { // TODO
+type Logger interface {
+	Debug(msg string, fields map[string]interface{})
+	Info(msg string, fields map[string]interface{})
+	Warn(msg string, fields map[string]interface{})
+	Error(msg string, fields map[string]interface{})
+	Fatal(msg string, fields map[string]interface{})
 }
 
-type Logger interface { // TODO
+type Server struct {
+	httpServer *http.Server
+	logger     Logger
 }
 
-type Application interface { // TODO
+func NewServer(logger Logger, host, port string, handler http.Handler) *Server {
+	return &Server{
+		httpServer: &http.Server{
+			Addr:    host + ":" + port,
+			Handler: handler,
+
+			ReadTimeout:  10 * time.Second,
+			WriteTimeout: 10 * time.Second,
+		},
+		logger: logger,
+	}
 }
 
-//nolint:revive
-func NewServer(logger Logger, app Application) *Server {
-	return &Server{}
+func (s *Server) Start() error {
+	s.logger.Info("starting http server...", map[string]interface{}{"address": s.httpServer.Addr})
+	err := s.httpServer.ListenAndServe()
+	if err != nil {
+		s.logger.Error("error while starting http server", map[string]interface{}{"error": err})
+	}
+
+	return err
 }
 
-func (s *Server) Start(ctx context.Context) error {
-	// TODO
-	<-ctx.Done()
-	return nil
-}
-
-//nolint:revive
 func (s *Server) Stop(ctx context.Context) error {
-	// TODO
-	return nil
+	return s.httpServer.Shutdown(ctx)
 }
-
-// TODO

@@ -8,8 +8,9 @@ import (
 )
 
 type Config struct {
-	Logger LoggerConf
-	SQL    SQLConf
+	Logger     LoggerConf
+	SQL        SQLConf
+	HTTPServer HTTPServerConf
 }
 
 type LoggerConf struct {
@@ -23,6 +24,11 @@ type SQLConf struct {
 	Port           string `mapstructure:"port"`
 	Database       string `mapstructure:"database"`
 	MigrationsPath string `mapstructure:"migrationsPath"`
+}
+
+type HTTPServerConf struct {
+	Host string `mapstructure:"host" default:"0.0.0.0"`
+	Port string `mapstructure:"port" default:"8080"`
 }
 
 func NewConfig(path string) (Config, error) {

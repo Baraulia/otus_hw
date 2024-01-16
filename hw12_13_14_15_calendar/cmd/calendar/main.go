@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/app"
+	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/handlers"
 	memorystorage "github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/storage/memory"
 	sqlstorage "github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/storage/sql"
 	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/pkg/logger"
@@ -67,8 +68,8 @@ func main() {
 	}
 
 	calendar := app.New(logg, storage)
-
-	server := internalhttp.NewServer(logg, calendar)
+	handler := handlers.NewHandler(logg, calendar)
+	server := internalhttp.NewServer(logg, config.HTTPServer.Host, config.HTTPServer.Port, handler.InitRoutes())
 
 	go func() {
 		<-ctx.Done()
@@ -85,7 +86,7 @@ func main() {
 
 	logg.Info("calendar is running...", nil)
 
-	if err := server.Start(ctx); err != nil {
+	if err := server.Start(); err != nil {
 		logg.Error("failed to start http server: "+err.Error(), nil)
 		cancel()
 		os.Exit(1) //nolint:gocritic
