@@ -15,6 +15,7 @@ linters-settings:
           - $gostd
           -  "github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/app"
           - "github.com/gorilla/mux"
+          - "github.com/google/uuid"
 
 issues:
   exclude-rules:

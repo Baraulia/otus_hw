@@ -4,6 +4,10 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"net/http/httptest"
+	"testing"
+	"time"
+
 	mockservice "github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/handlers/mocks"
 	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/models"
 	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/pkg/logger"
@@ -11,9 +15,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"net/http/httptest"
-	"testing"
-	"time"
 )
 
 func TestGetListEvents(t *testing.T) {
@@ -55,8 +56,10 @@ func TestGetListEvents(t *testing.T) {
 			getParams:          fmt.Sprintf("?start=%s", testParamTime),
 			expectedStatusCode: 200,
 			expectedRequestBody: fmt.Sprintf(
-				`[{"id":"%s","header":"test1","description":"testDescription1","user_id":"%s","event_time":"%s"},{"id":"%s","header":"test2","description":"testDescription2","user_id":"%s","event_time":"%s"}]`,
-				testEventID1, testUserID, testTime.Format(time.RFC3339Nano), testEventID2, testUserID, testTime.Format(time.RFC3339Nano)),
+				//nolint: lll
+				`[{"id":"%s","header":"test1","description":"testDescription1","userId":"%s","eventTime":"%s"},{"id":"%s","header":"test2","description":"testDescription2","userId":"%s","eventTime":"%s"}]`,
+				testEventID1, testUserID, testTime.Format(time.RFC3339Nano),
+				testEventID2, testUserID, testTime.Format(time.RFC3339Nano)),
 		},
 		{
 			name: "OK by a few day",
@@ -81,8 +84,10 @@ func TestGetListEvents(t *testing.T) {
 			getParams:          fmt.Sprintf("?start=%s&amount_days=3", testParamTime),
 			expectedStatusCode: 200,
 			expectedRequestBody: fmt.Sprintf(
-				`[{"id":"%s","header":"test1","description":"testDescription1","user_id":"%s","event_time":"%s"},{"id":"%s","header":"test2","description":"testDescription2","user_id":"%s","event_time":"%s"}]`,
-				testEventID1, testUserID, testTime.Format(time.RFC3339Nano), testEventID2, testUserID, testTime.Format(time.RFC3339Nano)),
+				//nolint: lll
+				`[{"id":"%s","header":"test1","description":"testDescription1","userId":"%s","eventTime":"%s"},{"id":"%s","header":"test2","description":"testDescription2","userId":"%s","eventTime":"%s"}]`,
+				testEventID1, testUserID, testTime.Format(time.RFC3339Nano),
+				testEventID2, testUserID, testTime.Format(time.RFC3339Nano)),
 		},
 		{
 			name: "Server error",
@@ -101,10 +106,11 @@ func TestGetListEvents(t *testing.T) {
 			expectedRequestBody: "start is required parameter\n",
 		},
 		{
-			name:                "invalid start time in input",
-			mockBehavior:        func(s *mockservice.MockApplicationInterface) {},
-			getParams:           "?start=invalidTime",
-			expectedStatusCode:  400,
+			name:               "invalid start time in input",
+			mockBehavior:       func(s *mockservice.MockApplicationInterface) {},
+			getParams:          "?start=invalidTime",
+			expectedStatusCode: 400,
+			//nolint: lll
 			expectedRequestBody: "invalid start parameter: parsing time \"invalidTime\" as \"2006-01-02\": cannot parse \"invalidTime\" as \"2006\"\n",
 		},
 		{
@@ -155,7 +161,7 @@ func TestCreateEvent(t *testing.T) {
 	}{
 		{
 			name: "OK",
-			inputBody: fmt.Sprintf(`{"header":"test1","description":"testDescription1","user_id":"%s","event_time":"%s"}`,
+			inputBody: fmt.Sprintf(`{"header":"test1","description":"testDescription1","userId":"%s","eventTime":"%s"}`,
 				testUserID, testTimeForJSON),
 			inputEvent: models.Event{
 				Header:           "test1",
@@ -173,7 +179,7 @@ func TestCreateEvent(t *testing.T) {
 		},
 		{
 			name: "server error",
-			inputBody: fmt.Sprintf(`{"header":"test1","description":"testDescription1","user_id":"%s","event_time":"%s"}`,
+			inputBody: fmt.Sprintf(`{"header":"test1","description":"testDescription1","userId":"%s","eventTime":"%s"}`,
 				testUserID, testTimeForJSON),
 			inputEvent: models.Event{
 				Header:           "test1",
@@ -191,7 +197,7 @@ func TestCreateEvent(t *testing.T) {
 		},
 		{
 			name: "invalid input",
-			inputBody: fmt.Sprintf(`{"header":"test1","description":"testDescription1","user_id":2,"event_time":"%s"}`,
+			inputBody: fmt.Sprintf(`{"header":"test1","description":"testDescription1","userId":2,"eventTime":"%s"}`,
 				testTimeForJSON),
 			inputEvent:   models.Event{},
 			mockBehavior: func(s *mockservice.MockApplicationInterface, eventDTO models.Event) {},
@@ -211,7 +217,7 @@ func TestCreateEvent(t *testing.T) {
 			handler := NewHandler(logg, appInterface)
 			r := handler.InitRoutes()
 			w := httptest.NewRecorder()
-			req := httptest.NewRequest("POST", fmt.Sprintf("/event"), bytes.NewBufferString(testCase.inputBody))
+			req := httptest.NewRequest("POST", "/event", bytes.NewBufferString(testCase.inputBody))
 
 			r.ServeHTTP(w, req)
 
@@ -237,7 +243,7 @@ func TestUpdateEvent(t *testing.T) {
 	}{
 		{
 			name: "OK",
-			inputBody: fmt.Sprintf(`{"header":"test1","description":"testDescription1","user_id":"%s","event_time":"%s"}`,
+			inputBody: fmt.Sprintf(`{"header":"test1","description":"testDescription1","userId":"%s","eventTime":"%s"}`,
 				testUserID, testTimeForJSON),
 			inputEvent: models.Event{
 				ID:               testEventID,
@@ -257,7 +263,7 @@ func TestUpdateEvent(t *testing.T) {
 		},
 		{
 			name: "server error",
-			inputBody: fmt.Sprintf(`{"header":"test1","description":"testDescription1","user_id":"%s","event_time":"%s"}`,
+			inputBody: fmt.Sprintf(`{"header":"test1","description":"testDescription1","userId":"%s","eventTime":"%s"}`,
 				testUserID, testTimeForJSON),
 			inputEvent: models.Event{
 				ID:               testEventID,
@@ -277,7 +283,7 @@ func TestUpdateEvent(t *testing.T) {
 		},
 		{
 			name: "invalid input",
-			inputBody: fmt.Sprintf(`{"header":"test1","description":"testDescription1","user_id":"%s","event_time":"%s"}`,
+			inputBody: fmt.Sprintf(`{"header":"test1","description":"testDescription1","userId":"%s","eventTime":"%s"}`,
 				testUserID, testTimeForJSON),
 			inputEvent:   models.Event{},
 			pathID:       1,
@@ -298,7 +304,8 @@ func TestUpdateEvent(t *testing.T) {
 			handler := NewHandler(logg, appInterface)
 			r := handler.InitRoutes()
 			w := httptest.NewRecorder()
-			req := httptest.NewRequest("PUT", fmt.Sprintf("/event/%v", testCase.pathID), bytes.NewBufferString(testCase.inputBody))
+			req := httptest.NewRequest(
+				"PUT", fmt.Sprintf("/event/%v", testCase.pathID), bytes.NewBufferString(testCase.inputBody))
 
 			r.ServeHTTP(w, req)
 

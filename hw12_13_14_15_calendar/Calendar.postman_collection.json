@@ -35,7 +35,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"header\":\"test1\",\"description\":\"testDescription1\",\"user_id\":\"d9b64851-b955-4e29-aac2-0c0eea95d6fd\",\"event_time\":\"2024-01-19T14:58:52.658679888+03:00\"}",
+					"raw": "{\"header\":\"test1\",\"description\":\"testDescription1\",\"userId\":\"d9b64851-b955-4e29-aac2-0c0eea95d6fd\",\"eventTime\":\"2024-01-19T14:58:52.658679888+03:00\"}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -65,7 +65,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"header\":\"updating header\",\"description\":\"updating description\",\"user_id\":\"d9b64851-b955-4e29-aac2-0c0eea95d5fd\",\"event_time\":\"2024-01-19T14:58:52.658679888+03:00\"}",
+					"raw": "{\"header\":\"updating header\",\"description\":\"updating description\",\"userId\":\"d9b64851-b955-4e29-aac2-0c0eea95d5fd\",\"eventTime\":\"2024-01-19T14:58:52.658679888+03:00\"}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -94,15 +94,6 @@
 			"request": {
 				"method": "DELETE",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\"header\":\"test1\",\"description\":\"testDescription1\",\"user_id\":\"d9b64851-b955-4e29-aac2-0c0eea95d5fd\",\"event_time\":\"2024-01-19T14:58:52.658679888+03:00\"}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
 					"raw": "0.0.0.0:8085/event/fae8a0c8-9880-4b70-ab5f-562034541ac2",
 					"host": [

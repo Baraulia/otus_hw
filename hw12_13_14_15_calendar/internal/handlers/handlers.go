@@ -1,20 +1,17 @@
 package handlers
 
+//nolint:depguard
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/models"
-	"github.com/google/uuid"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
-)
 
-type fetchTime struct {
-	Start      time.Time `json:"start"`
-	AmountDays int       `json:"amount_days"`
-}
+	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/models"
+	"github.com/google/uuid"
+)
 
 func (h *Handler) helloHandler(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)

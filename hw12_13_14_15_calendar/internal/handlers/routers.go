@@ -1,12 +1,13 @@
 package handlers
 
+//nolint:depguard
 import (
 	"context"
-	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/models"
 	"net/http"
 	"time"
 
 	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/app"
+	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/models"
 	"github.com/gorilla/mux"
 )
 
