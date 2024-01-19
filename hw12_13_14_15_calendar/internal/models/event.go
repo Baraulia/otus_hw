@@ -3,11 +3,11 @@ package models
 import "time"
 
 type Event struct {
-	ID               string
-	Header           string
-	Description      string
-	UserID           string
-	EventTime        time.Time
-	FinishEventTime  time.Time
-	NotificationTime time.Time
+	ID               string     `json:"id"`
+	Header           string     `json:"header"`
+	Description      string     `json:"description"`
+	UserID           string     `json:"user_id"`
+	EventTime        time.Time  `json:"event_time"`
+	FinishEventTime  *time.Time `json:"finish_event_time,omitempty"`
+	NotificationTime *time.Time `json:"notification_time,omitempty"`
 }
