@@ -11,6 +11,7 @@ type Config struct {
 	Logger     LoggerConf
 	SQL        SQLConf
 	HTTPServer HTTPServerConf
+	GRPCServer GRPCServerConf
 }
 
 type LoggerConf struct {
@@ -29,6 +30,10 @@ type SQLConf struct {
 type HTTPServerConf struct {
 	Host string `mapstructure:"host" default:"0.0.0.0"`
 	Port string `mapstructure:"port" default:"8080"`
+}
+
+type GRPCServerConf struct {
+	Port string `mapstructure:"port" default:"50051"`
 }
 
 func NewConfig(path string) (Config, error) {

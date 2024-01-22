@@ -2,30 +2,19 @@ package handlers
 
 //nolint:depguard
 import (
-	"context"
 	"net/http"
-	"time"
 
+	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/api"
 	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/app"
-	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/models"
 	"github.com/gorilla/mux"
 )
 
-//go:generate mockgen -source=routers.go -destination=mocks/service_mock.go
-type ApplicationInterface interface {
-	CreateEvent(ctx context.Context, eventDTO models.Event) (string, error)
-	UpdateEvent(ctx context.Context, eventDTO models.Event) error
-	DeleteEvent(ctx context.Context, id string) error
-	GetListEventsDuringDay(ctx context.Context, day time.Time) ([]models.Event, error)
-	GetListEventsDuringFewDays(ctx context.Context, start time.Time, amountDays int) ([]models.Event, error)
-}
-
 type Handler struct {
 	logger app.Logger
-	app    ApplicationInterface
+	app    api.ApplicationInterface
 }
 
-func NewHandler(logger app.Logger, app ApplicationInterface) *Handler {
+func NewHandler(logger app.Logger, app api.ApplicationInterface) *Handler {
 	return &Handler{logger: logger, app: app}
 }
 

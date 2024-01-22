@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	mockservice "github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/handlers/mocks"
+	mockservice "github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/api/mocks"
 	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/models"
 	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/pkg/logger"
 	"github.com/golang/mock/gomock"
