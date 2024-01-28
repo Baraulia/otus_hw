@@ -5,3 +5,5 @@ sql:
 httpServer:
   host: 0.0.0.0
   port: 8085
+grpcServer:
+  port: 50051
