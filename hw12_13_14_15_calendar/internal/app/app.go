@@ -34,11 +34,22 @@ func New(logger Logger, storage Storage) *App {
 	return &App{logger: logger, storage: storage}
 }
 
-//nolint:revive
-func (a *App) CreateEvent(ctx context.Context, id, title string) error {
-	// TODO
-	return nil
-	// return a.storage.CreateEvent(storage.Event{ID: id, Title: title})
+func (a *App) CreateEvent(ctx context.Context, dto models.Event) (string, error) {
+	return a.storage.CreateEvent(ctx, dto)
 }
 
-// TODO
+func (a *App) UpdateEvent(ctx context.Context, eventDTO models.Event) error {
+	return a.storage.UpdateEvent(ctx, eventDTO)
+}
+
+func (a *App) DeleteEvent(ctx context.Context, id string) error {
+	return a.storage.DeleteEvent(ctx, id)
+}
+
+func (a *App) GetListEventsDuringDay(ctx context.Context, day time.Time) ([]models.Event, error) {
+	return a.storage.GetListEventsDuringDay(ctx, day)
+}
+
+func (a *App) GetListEventsDuringFewDays(ctx context.Context, start time.Time, amountDays int) ([]models.Event, error) {
+	return a.storage.GetListEventsDuringFewDays(ctx, start, amountDays)
+}

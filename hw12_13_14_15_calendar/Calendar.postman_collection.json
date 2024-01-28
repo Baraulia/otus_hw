@@ -1,0 +1,147 @@
+{
+	"info": {
+		"_postman_id": "0b710b50-616b-4ece-a16f-df09cb133615",
+		"name": "Calendar",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14312014",
+		"_collection_link": "https://www.postman.com/solbeg-wada/workspace/otus-hw/collection/14312014-0b710b50-616b-4ece-a16f-df09cb133615?action=share&source=collection_link&creator=14312014"
+	},
+	"item": [
+		{
+			"name": "Hello",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "0.0.0.0:8085/hello",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8085",
+					"path": [
+						"hello"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_event",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"header\":\"test1\",\"description\":\"testDescription1\",\"userId\":\"d9b64851-b955-4e29-aac2-0c0eea95d6fd\",\"eventTime\":\"2024-01-19T14:58:52.658679888+03:00\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "0.0.0.0:8085/event",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8085",
+					"path": [
+						"event"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update_event",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"header\":\"updating header\",\"description\":\"updating description\",\"userId\":\"d9b64851-b955-4e29-aac2-0c0eea95d5fd\",\"eventTime\":\"2024-01-19T14:58:52.658679888+03:00\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "0.0.0.0:8085/event/fae8a0c8-9880-4b70-ab5f-562034541ac2",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8085",
+					"path": [
+						"event",
+						"fae8a0c8-9880-4b70-ab5f-562034541ac2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete_event",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "0.0.0.0:8085/event/fae8a0c8-9880-4b70-ab5f-562034541ac2",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8085",
+					"path": [
+						"event",
+						"fae8a0c8-9880-4b70-ab5f-562034541ac2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get_events",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "0.0.0.0:8085/event/list?start=2024-01-19&amount_days=3",
+					"host": [
+						"0",
+						"0",
+						"0",
+						"0"
+					],
+					"port": "8085",
+					"path": [
+						"event",
+						"list"
+					],
+					"query": [
+						{
+							"key": "start",
+							"value": "2024-01-19"
+						},
+						{
+							"key": "amount_days",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
