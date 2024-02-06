@@ -103,3 +103,42 @@ func (s *Storage) GetListEventsDuringFewDays(
 
 	return events, nil
 }
+
+func (s *Storage) DeleteOldEvent(_ context.Context) error {
+	var count int
+	s.mu.Lock()
+	for id, event := range s.repository {
+		if event.EventTime.Before(time.Now().AddDate(-1, 0, 0)) {
+			delete(s.repository, id)
+			count++
+		}
+	}
+	s.mu.Unlock()
+
+	if count > 0 {
+		s.logger.Info(fmt.Sprintf("%d events have been deleted", count), nil)
+	}
+
+	return nil
+}
+
+func (s *Storage) GetNotifications(_ context.Context) ([]models.Notification, error) {
+	var notifications []models.Notification
+	s.mu.RLock()
+	for id, event := range s.repository {
+		if event.EventTime.Before(time.Now().Add(24*time.Hour).Truncate(24*time.Hour)) &&
+			time.Now().Before(event.EventTime.Add(24*time.Hour).Truncate(24*time.Hour)) {
+			notification := models.Notification{
+				ID:          id,
+				EventHeader: event.Header,
+				EventTime:   event.EventTime,
+				UserID:      event.UserID,
+			}
+
+			notifications = append(notifications, notification)
+		}
+	}
+	s.mu.RUnlock()
+
+	return notifications, nil
+}
