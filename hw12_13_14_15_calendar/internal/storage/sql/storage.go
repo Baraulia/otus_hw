@@ -99,9 +99,9 @@ func (s *PostgresStorage) CreateEvent(ctx context.Context, eventDTO models.Event
 
 func (s *PostgresStorage) UpdateEvent(ctx context.Context, eventDTO models.Event) error {
 	sql := fmt.Sprintf(
-		"UPDATE %s SET ("+
+		"UPDATE %s SET "+
 			"header = $1,description = $2, user_id = $3, event_time = $4,"+
-			" finish_event_time = $5, notification_time = $6) "+
+			" finish_event_time = $5, notification_time = $6 "+
 			"WHERE id = $7", EventTable)
 	result, err := s.db.Exec(
 		ctx,
