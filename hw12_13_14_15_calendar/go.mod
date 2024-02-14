@@ -12,6 +12,7 @@ require (
 	github.com/lib/pq v1.10.9
 	github.com/pressly/goose v2.7.0+incompatible
 	github.com/spf13/viper v1.18.2
+	github.com/streadway/amqp v1.1.0
 	github.com/stretchr/testify v1.8.4
 	go.uber.org/zap v1.26.0
 	google.golang.org/grpc v1.60.1

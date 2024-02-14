@@ -35,7 +35,7 @@ type PgConfig struct {
 	MigrationsPath string
 }
 
-func NewPostgresStorage(conf PgConfig, logger app.Logger) *PostgresStorage {
+func NewPostgresStorage(conf PgConfig, logger app.Logger, migrate bool) *PostgresStorage {
 	url := fmt.Sprintf(
 		"postgresql://%s:%s@%s:%s/%s?sslmode=disable",
 		conf.Username, conf.Password,
@@ -43,12 +43,12 @@ func NewPostgresStorage(conf PgConfig, logger app.Logger) *PostgresStorage {
 	)
 	storage := &PostgresStorage{databaseURL: url, logger: logger, migrationsPath: conf.MigrationsPath}
 
-	storage.Connect()
+	storage.Connect(migrate)
 
 	return storage
 }
 
-func (s *PostgresStorage) Connect() {
+func (s *PostgresStorage) Connect(migrate bool) {
 	poolConfig, err := pgxpool.ParseConfig(fmt.Sprintf("%s&pool_max_conns=%d", s.databaseURL, MaxConnections))
 	if err != nil {
 		s.logger.Fatal("Unable to parse databaseURL", map[string]interface{}{"error": err, "databaseURL": s.databaseURL})
@@ -66,9 +66,11 @@ func (s *PostgresStorage) Connect() {
 		s.logger.Fatal("error while connecting to postgres by goose", map[string]interface{}{"error": err})
 	}
 
-	s.logger.Info("executing migrations...", nil)
-	if err := goose.Up(gooseDB, s.migrationsPath); err != nil {
-		s.logger.Fatal("error while executing migrations", map[string]interface{}{"error": err})
+	if migrate {
+		s.logger.Info("executing migrations...", nil)
+		if err := goose.Up(gooseDB, s.migrationsPath); err != nil {
+			s.logger.Fatal("error while executing migrations", map[string]interface{}{"error": err})
+		}
 	}
 }
 
@@ -79,7 +81,7 @@ func (s *PostgresStorage) Close() {
 func (s *PostgresStorage) CreateEvent(ctx context.Context, eventDTO models.Event) (string, error) {
 	var id string
 	sql := fmt.Sprintf(
-		"INSERT INTO %s ('header','description','user_id','event_time','finish_event_time','notification_time') "+
+		"INSERT INTO %s (header,description,user_id,event_time,finish_event_time,notification_time) "+
 			"VALUES($1, $2, $3, $4, $5, $6) RETURNING id", EventTable)
 	err := s.db.QueryRow(
 		ctx,
@@ -97,9 +99,9 @@ func (s *PostgresStorage) CreateEvent(ctx context.Context, eventDTO models.Event
 
 func (s *PostgresStorage) UpdateEvent(ctx context.Context, eventDTO models.Event) error {
 	sql := fmt.Sprintf(
-		"UPDATE %s SET ("+
+		"UPDATE %s SET "+
 			"header = $1,description = $2, user_id = $3, event_time = $4,"+
-			" finish_event_time = $5, notification_time = $6) "+
+			" finish_event_time = $5, notification_time = $6 "+
 			"WHERE id = $7", EventTable)
 	result, err := s.db.Exec(
 		ctx,
@@ -194,4 +196,45 @@ func (s *PostgresStorage) GetListEventsDuringFewDays(
 	}
 
 	return events, nil
+}
+
+func (s *PostgresStorage) DeleteOldEvent(ctx context.Context) error {
+	sql := fmt.Sprintf(
+		"DELETE FROM %s WHERE event_time < $1", EventTable)
+	result, err := s.db.Exec(ctx, sql, time.Now().AddDate(-1, 0, 0))
+	if err != nil {
+		s.logger.Error("error while deleting old events", map[string]interface{}{"error": err})
+		return fmt.Errorf("error while deleting event: %w", err)
+	}
+
+	if count := result.RowsAffected(); count != 0 {
+		s.logger.Error(fmt.Sprintf("%d events have been deleted", count), nil)
+	}
+
+	return nil
+}
+
+func (s *PostgresStorage) GetNotifications(ctx context.Context) ([]models.Notification, error) {
+	sql := fmt.Sprintf(
+		"SELECT id, header, user_id, event_time FROM %s WHERE DATE(notification_time) = DATE($1)", EventTable)
+	rows, err := s.db.Query(ctx, sql, time.Now())
+	if err != nil {
+		s.logger.Error("error while getting list events for notification", map[string]interface{}{"error": err})
+		return nil, fmt.Errorf("error while getting list events for notification: %w", err)
+	}
+	defer rows.Close()
+
+	notifications := make([]models.Notification, 0)
+	for rows.Next() {
+		var notification models.Notification
+		if err = rows.Scan(
+			&notification.ID, &notification.EventHeader, &notification.UserID, &notification.EventTime); err != nil {
+			s.logger.Error("error while scanning notification", map[string]interface{}{"error": err})
+			return nil, fmt.Errorf("error while scanning notification: %w", err)
+		}
+
+		notifications = append(notifications, notification)
+	}
+
+	return notifications, nil
 }
