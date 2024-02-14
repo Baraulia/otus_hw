@@ -3,8 +3,8 @@ package models
 import "time"
 
 type Notification struct {
-	ID          string
-	EventHeader string
-	EventTime   time.Time
-	UserID      string
+	ID          string    `json:"eventId"`
+	EventHeader string    `json:"eventHeader"`
+	EventTime   time.Time `json:"eventTime"`
+	UserID      string    `json:"userId"`
 }

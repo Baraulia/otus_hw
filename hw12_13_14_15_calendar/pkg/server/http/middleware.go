@@ -5,7 +5,7 @@ import (
 )
 
 func loggingMiddleware(_ http.Handler) http.Handler { //nolint:unused
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	return http.HandlerFunc(func(_ http.ResponseWriter, _ *http.Request) {
 		// TODO
 	})
 }

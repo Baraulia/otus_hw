@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS event (
     description VARCHAR(255) NOT NULL DEFAULT '',
     user_id VARCHAR(255) NOT NULL,
     event_time TIMESTAMPTZ NOT NULL,
-    finish_event_time TIMESTAMPTZ NOT NULL,
+    finish_event_time TIMESTAMPTZ,
     notification_time TIMESTAMPTZ
 );
 

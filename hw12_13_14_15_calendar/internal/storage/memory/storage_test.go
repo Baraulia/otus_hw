@@ -7,6 +7,7 @@ import (
 
 	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/internal/models"
 	"github.com/Baraulia/otus_hw/hw12_13_14_15_calendar/pkg/logger"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 )
 
@@ -121,4 +122,60 @@ func TestGetEvents(t *testing.T) {
 	require.Equal(t, len(eventsPerDay), 1)
 	require.Equal(t, len(eventsPerWeek), 7)
 	require.Equal(t, len(eventsPerMonth), 10)
+}
+
+func TestDeleteOldEvent(t *testing.T) {
+	logg, err := logger.GetLogger("INFO")
+	require.NoError(t, err)
+	storage := New(logg)
+	ctx := context.Background()
+
+	_, err = storage.CreateEvent(ctx, models.Event{
+		Header:    "old event",
+		EventTime: time.Now().AddDate(-1, 0, -1),
+	})
+	require.NoError(t, err)
+
+	eventsBefore, err := storage.GetListEventsDuringFewDays(ctx, time.Now().AddDate(-1, 0, -2), 367)
+	require.NoError(t, err)
+	countBefore := len(eventsBefore)
+
+	err = storage.DeleteOldEvent(ctx)
+	require.NoError(t, err)
+
+	eventsAfter, err := storage.GetListEventsDuringFewDays(ctx, time.Now().AddDate(-1, 0, -2), 367)
+	require.NoError(t, err)
+	countAfter := len(eventsAfter)
+
+	require.Equal(t, 1, countBefore)
+	require.Equal(t, 0, countAfter)
+}
+
+func TestGetNotifications(t *testing.T) {
+	logg, err := logger.GetLogger("INFO")
+	require.NoError(t, err)
+	storage := New(logg)
+	ctx := context.Background()
+	id, err := uuid.NewUUID()
+	require.NoError(t, err)
+
+	testNotification := models.Notification{
+		EventHeader: "testEvent",
+		EventTime:   time.Now(),
+		UserID:      id.String(),
+	}
+
+	eventID, err := storage.CreateEvent(ctx, models.Event{
+		Header:    testNotification.EventHeader,
+		UserID:    testNotification.UserID,
+		EventTime: testNotification.EventTime,
+	})
+	require.NoError(t, err)
+	testNotification.ID = eventID
+
+	notifications, err := storage.GetNotifications(ctx)
+	require.NoError(t, err)
+
+	require.Equal(t, 1, len(notifications))
+	require.Equal(t, testNotification, notifications[0])
 }
