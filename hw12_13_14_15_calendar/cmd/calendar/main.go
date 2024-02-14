@@ -77,9 +77,10 @@ func main() {
 			Port:           config.SQL.Port,
 			Database:       config.SQL.Database,
 			MigrationsPath: config.SQL.MigrationsPath,
-		}, logg)
+		}, logg, true)
 	}
 
+	defer storage.Close()
 	calendar := app.New(logg, storage)
 
 	switch strings.ToLower(transport) {
@@ -96,8 +97,6 @@ func main() {
 			if err := server.Stop(ctx); err != nil {
 				logg.Error("failed to stop http server: "+err.Error(), nil)
 			}
-
-			storage.Close()
 		}()
 
 		logg.Info("calendar is running...", nil)
@@ -116,7 +115,6 @@ func main() {
 			<-ctx.Done()
 			logg.Info("stopping grpc server...", nil)
 			server.GracefulStop()
-			storage.Close()
 		}()
 
 		lsn, err := net.Listen("tcp", fmt.Sprintf(":%s", config.GRPCServer.Port))

@@ -100,14 +100,14 @@ func TestGetListEvents(t *testing.T) {
 		},
 		{
 			name:                "No start time in input",
-			mockBehavior:        func(s *mockservice.MockApplicationInterface) {},
+			mockBehavior:        func(_ *mockservice.MockApplicationInterface) {},
 			getParams:           "",
 			expectedStatusCode:  400,
 			expectedRequestBody: "start is required parameter\n",
 		},
 		{
 			name:               "invalid start time in input",
-			mockBehavior:       func(s *mockservice.MockApplicationInterface) {},
+			mockBehavior:       func(_ *mockservice.MockApplicationInterface) {},
 			getParams:          "?start=invalidTime",
 			expectedStatusCode: 400,
 			//nolint: lll
@@ -115,7 +115,7 @@ func TestGetListEvents(t *testing.T) {
 		},
 		{
 			name:                "invalid amount days in input",
-			mockBehavior:        func(s *mockservice.MockApplicationInterface) {},
+			mockBehavior:        func(_ *mockservice.MockApplicationInterface) {},
 			getParams:           fmt.Sprintf("?start=%s&amount_days=a", testParamTime),
 			expectedStatusCode:  400,
 			expectedRequestBody: "Invalid amount_days parameter\n",
@@ -200,7 +200,7 @@ func TestCreateEvent(t *testing.T) {
 			inputBody: fmt.Sprintf(`{"header":"test1","description":"testDescription1","userId":2,"eventTime":"%s"}`,
 				testTimeForJSON),
 			inputEvent:   models.Event{},
-			mockBehavior: func(s *mockservice.MockApplicationInterface, eventDTO models.Event) {},
+			mockBehavior: func(_ *mockservice.MockApplicationInterface, _ models.Event) {},
 
 			expectedStatusCode: 400,
 		},
@@ -287,7 +287,7 @@ func TestUpdateEvent(t *testing.T) {
 				testUserID, testTimeForJSON),
 			inputEvent:   models.Event{},
 			pathID:       1,
-			mockBehavior: func(s *mockservice.MockApplicationInterface, eventDTO models.Event) {},
+			mockBehavior: func(_ *mockservice.MockApplicationInterface, _ models.Event) {},
 
 			expectedStatusCode: 400,
 		},
@@ -348,7 +348,7 @@ func TestDeleteEvent(t *testing.T) {
 		{
 			name:               "invalid input",
 			pathID:             1,
-			mockBehavior:       func(s *mockservice.MockApplicationInterface, id string) {},
+			mockBehavior:       func(_ *mockservice.MockApplicationInterface, _ string) {},
 			expectedStatusCode: 400,
 		},
 	}
