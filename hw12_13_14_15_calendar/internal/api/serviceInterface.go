@@ -15,4 +15,5 @@ type ApplicationInterface interface {
 	DeleteEvent(ctx context.Context, id string) error
 	GetListEventsDuringDay(ctx context.Context, day time.Time) ([]models.Event, error)
 	GetListEventsDuringFewDays(ctx context.Context, start time.Time, amountDays int) ([]models.Event, error)
+	CheckReadness(ctx context.Context) (bool, error)
 }

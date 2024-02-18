@@ -238,3 +238,12 @@ func (s *PostgresStorage) GetNotifications(ctx context.Context) ([]models.Notifi
 
 	return notifications, nil
 }
+
+func (s *PostgresStorage) CheckReadness(ctx context.Context) (bool, error) {
+	err := s.db.Ping(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}

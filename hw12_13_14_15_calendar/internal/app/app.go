@@ -27,6 +27,7 @@ type Storage interface {
 	DeleteEvent(ctx context.Context, id string) error
 	GetListEventsDuringDay(ctx context.Context, day time.Time) ([]models.Event, error)
 	GetListEventsDuringFewDays(ctx context.Context, start time.Time, amountDays int) ([]models.Event, error)
+	CheckReadness(ctx context.Context) (bool, error)
 	Close()
 }
 
@@ -52,4 +53,8 @@ func (a *App) GetListEventsDuringDay(ctx context.Context, day time.Time) ([]mode
 
 func (a *App) GetListEventsDuringFewDays(ctx context.Context, start time.Time, amountDays int) ([]models.Event, error) {
 	return a.storage.GetListEventsDuringFewDays(ctx, start, amountDays)
+}
+
+func (a *App) CheckReadness(ctx context.Context) (bool, error) {
+	return a.storage.CheckReadness(ctx)
 }

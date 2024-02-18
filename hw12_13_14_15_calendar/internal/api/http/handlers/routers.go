@@ -29,5 +29,8 @@ func (h *Handler) InitRoutes() *mux.Router {
 	r.HandleFunc("/event/{id}", h.deleteEvent).Methods(http.MethodDelete)
 	r.HandleFunc("/event/list", h.getListEvents).Methods(http.MethodGet)
 
+	r.HandleFunc("/healthz", h.livenessProbe).Methods(http.MethodGet)
+	r.HandleFunc("/readyz", h.readinessProbe).Methods(http.MethodGet)
+
 	return r
 }

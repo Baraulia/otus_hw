@@ -142,3 +142,7 @@ func (s *Storage) GetNotifications(_ context.Context) ([]models.Notification, er
 
 	return notifications, nil
 }
+
+func (s *Storage) CheckReadness(_ context.Context) (bool, error) {
+	return true, nil
+}

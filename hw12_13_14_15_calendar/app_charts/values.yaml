@@ -1,0 +1,25 @@
+# Default values for app_charts.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+calendar:
+  image:
+    repository: 45644/calendar
+    tag: "1.0"
+  service:
+    port: 8085
+    targetPort: 8085
+  ingress:
+    enabled: true
+    path: /calendar
+
+scheduler:
+  image:
+    repository: 45644/scheduler
+    tag: "1.0"
+
+sender:
+  image:
+    repository: 45644/sender
+    tag: "1.0"
