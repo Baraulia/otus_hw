@@ -31,6 +31,16 @@ type MBConf struct {
 
 func NewConfig(path string) (Config, error) {
 	var conf Config
+	err := viper.BindEnv("MB.Host", "mbHost")
+	if err != nil {
+		return conf, err
+	}
+
+	err = viper.BindEnv("MB.Port", "mbPort")
+	if err != nil {
+		return conf, err
+	}
+
 	viper.SetDefault("MB.Username", "rabbit")
 	viper.SetDefault("MB.Password", "password")
 	viper.SetDefault("MB.Host", "0.0.0.0")

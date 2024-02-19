@@ -3,7 +3,6 @@ package main
 //nolint:depguard
 import (
 	"fmt"
-
 	"github.com/spf13/viper"
 )
 
@@ -21,8 +20,8 @@ type LoggerConf struct {
 type SQLConf struct {
 	Username       string `mapstructure:"userName"`
 	Password       string `mapstructure:"password"`
-	Host           string `mapstructure:"host"`
-	Port           string `mapstructure:"port"`
+	Host           string `mapstructure:"Host"`
+	Port           string `mapstructure:"Port"`
 	Database       string `mapstructure:"database"`
 	MigrationsPath string `mapstructure:"migrationsPath"`
 }
@@ -38,6 +37,16 @@ type GRPCServerConf struct {
 
 func NewConfig(path string) (Config, error) {
 	var conf Config
+	err := viper.BindEnv("SQL.Host", "sqlHost")
+	if err != nil {
+		return conf, err
+	}
+
+	err = viper.BindEnv("SQL.Port", "sqlPort")
+	if err != nil {
+		return conf, err
+	}
+
 	viper.SetDefault("SQL.Username", "postgres")
 	viper.SetDefault("SQL.Password", "password")
 	viper.SetDefault("SQL.Host", "0.0.0.0")

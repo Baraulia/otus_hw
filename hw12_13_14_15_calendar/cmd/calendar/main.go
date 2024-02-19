@@ -78,6 +78,8 @@ func main() {
 			Database:       config.SQL.Database,
 			MigrationsPath: config.SQL.MigrationsPath,
 		}, logg, true)
+	default:
+		logg.Warn("unsupported type of database", map[string]interface{}{"database": database})
 	}
 
 	defer storage.Close()

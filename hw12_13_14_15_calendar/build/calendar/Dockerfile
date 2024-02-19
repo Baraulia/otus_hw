@@ -31,6 +31,10 @@ ENV BIN_FILE "/opt/calendar/calendar-app"
 COPY --from=build ${BIN_FILE} ${BIN_FILE}
 
 ENV CONFIG_FILE /etc/calendar/config.yaml
+ENV DATABASE=memory
+ENV TRANSPORT=grpc
 COPY ./configs/config.yaml ${CONFIG_FILE}
+COPY ./migrations ./migrations
+EXPOSE 8085
 
 CMD ${BIN_FILE} -config ${CONFIG_FILE} -database ${DATABASE} -transport ${TRANSPORT}
