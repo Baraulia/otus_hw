@@ -50,12 +50,27 @@ func NewConfig(path string) (Config, error) {
 		return conf, err
 	}
 
+	err = viper.BindEnv("SQL.Database", "sqlDatabase")
+	if err != nil {
+		return conf, err
+	}
+
 	err = viper.BindEnv("MB.Host", "mbHost")
 	if err != nil {
 		return conf, err
 	}
 
 	err = viper.BindEnv("MB.Port", "mbPort")
+	if err != nil {
+		return conf, err
+	}
+
+	err = viper.BindEnv("MB.Username", "mbUsername")
+	if err != nil {
+		return conf, err
+	}
+
+	err = viper.BindEnv("MB.Password", "mbPassword")
 	if err != nil {
 		return conf, err
 	}

@@ -38,7 +38,7 @@ var (
 func init() {
 	flag.StringVar(&configFile, "config", "./configs/config.yaml", "Path to configuration file")
 	flag.StringVar(&database, "database", "memory", "What database should we use")
-	flag.StringVar(&transport, "transport", "grpc", "What transport we need to use(grpc or http)")
+	flag.StringVar(&transport, "transport", "http", "What transport we need to use(grpc or http)")
 }
 
 func main() {

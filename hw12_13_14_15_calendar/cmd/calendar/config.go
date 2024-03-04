@@ -3,6 +3,7 @@ package main
 //nolint:depguard
 import (
 	"fmt"
+
 	"github.com/spf13/viper"
 )
 
@@ -43,6 +44,11 @@ func NewConfig(path string) (Config, error) {
 	}
 
 	err = viper.BindEnv("SQL.Port", "sqlPort")
+	if err != nil {
+		return conf, err
+	}
+
+	err = viper.BindEnv("SQL.Database", "sqlDatabase")
 	if err != nil {
 		return conf, err
 	}

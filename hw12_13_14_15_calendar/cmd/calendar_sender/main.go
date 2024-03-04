@@ -43,9 +43,21 @@ func main() {
 		config.MB.Protocol, config.MB.Username, config.MB.Password, config.MB.Host, config.MB.Port)
 
 	broker := mb.NewBroker(connectionURL, config.MB.ExchangeName, config.MB.ExchangeType, logg, true)
-	consumer := mb.NewConsumer(config.MB.ClientTag, broker)
+	err = broker.Connect()
+	if err != nil {
+		logg.Fatal("error while connecting to message broker", map[string]interface{}{"error": err})
+	}
+	defer broker.Close()
 
-	notificationSender := sender.New(logg, consumer, config.MB.QueueName, config.MB.RouteKey)
+	if err = broker.InitQueue(config.MB.ConfirmQueueName, config.MB.RouteKey); err != nil {
+		logg.Fatal("error while initialization queue",
+			map[string]interface{}{"error": err, "queue name": config.MB.ConfirmQueueName, "routing key": config.MB.RouteKey})
+	}
+
+	consumer := mb.NewConsumer(config.MB.ClientTag, broker)
+	producer := mb.NewProducer(broker)
+
+	notificationSender := sender.New(logg, consumer, producer, config.MB.QueueName, config.MB.RouteKey)
 	logg.Info("starting notification sender...", nil)
 	go notificationSender.Start(ctx)
 
