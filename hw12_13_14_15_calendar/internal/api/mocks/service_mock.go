@@ -36,6 +36,21 @@ func (m *MockApplicationInterface) EXPECT() *MockApplicationInterfaceMockRecorde
 	return m.recorder
 }
 
+// CheckReadness mocks base method.
+func (m *MockApplicationInterface) CheckReadness(ctx context.Context) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CheckReadness", ctx)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CheckReadness indicates an expected call of CheckReadness.
+func (mr *MockApplicationInterfaceMockRecorder) CheckReadness(ctx interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckReadness", reflect.TypeOf((*MockApplicationInterface)(nil).CheckReadness), ctx)
+}
+
 // CreateEvent mocks base method.
 func (m *MockApplicationInterface) CreateEvent(ctx context.Context, eventDTO models.Event) (string, error) {
 	m.ctrl.T.Helper()

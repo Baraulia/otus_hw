@@ -40,6 +40,41 @@ type MBConf struct {
 
 func NewConfig(path string) (Config, error) {
 	var conf Config
+	err := viper.BindEnv("SQL.Host", "sqlHost")
+	if err != nil {
+		return conf, err
+	}
+
+	err = viper.BindEnv("SQL.Port", "sqlPort")
+	if err != nil {
+		return conf, err
+	}
+
+	err = viper.BindEnv("SQL.Database", "sqlDatabase")
+	if err != nil {
+		return conf, err
+	}
+
+	err = viper.BindEnv("MB.Host", "mbHost")
+	if err != nil {
+		return conf, err
+	}
+
+	err = viper.BindEnv("MB.Port", "mbPort")
+	if err != nil {
+		return conf, err
+	}
+
+	err = viper.BindEnv("MB.Username", "mbUsername")
+	if err != nil {
+		return conf, err
+	}
+
+	err = viper.BindEnv("MB.Password", "mbPassword")
+	if err != nil {
+		return conf, err
+	}
+
 	viper.SetDefault("SQL.Username", "postgres")
 	viper.SetDefault("SQL.Password", "password")
 	viper.SetDefault("SQL.Host", "0.0.0.0")

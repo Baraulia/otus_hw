@@ -1,35 +1,44 @@
 version: '3.9'
 
 services:
+  integration_tests:
+    build:
+      context: ../tests
+      dockerfile: Dockerfile
+    command: "true"
+    environment:
+      TESTS_AMQP_DSN: "amqp://guest:guest@rabbitmq:5672/"
+      POSTGRES_HOST: "postgres"
+    networks:
+      - calendar_network
   postgres:
     image: postgres:latest
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: backend
+      POSTGRES_DB: postgres
     ports:
       - "5435:5432"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -d backend" ]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d postgres" ]
       interval: 5s
       timeout: 5s
       retries: 5
       start_period: 5s
-    networks:
-      - calendar_network
     volumes:
       - postgres-data:/var/lib/postgresql/data
+    networks:
+      - calendar_network
 
   rabbitmq:
     image: rabbitmq:management
     environment:
-      RABBITMQ_DEFAULT_USER: rabbit
-      RABBITMQ_DEFAULT_PASS: password
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     ports:
       - "5672:5672"
-      - "15672:15672"
     healthcheck:
-      test: [ "CMD", "rabbitmqctl", "ping" ]
+      test: rabbitmq-diagnostics -q ping
       interval: 5s
       timeout: 5s
       retries: 5
@@ -47,8 +56,9 @@ services:
       TRANSPORT: http
       sqlHost: postgres
       sqlPort: 5432
+      sqlDatabase: "postgres"
     ports:
-      - "8888:8085"
+      - "8088:8080"
     depends_on:
       postgres:
         condition: service_healthy
@@ -63,8 +73,11 @@ services:
     environment:
       sqlHost: postgres
       sqlPort: 5432
+      sqlDatabase: "postgres"
       mbHost: rabbitmq
       mbPort: 5672
+      mbUsername: "guest"
+      mbPassword: "guest"
     depends_on:
       postgres:
         condition: service_healthy
@@ -81,6 +94,8 @@ services:
     environment:
       mbHost: rabbitmq
       mbPort: 5672
+      mbUsername: "guest"
+      mbPassword: "guest"
     depends_on:
       rabbitmq:
         condition: service_healthy

@@ -1,0 +1,17 @@
+---
+# Source: calendar/templates/calendar/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: calendar-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /calendar
+            pathType: Prefix
+            backend:
+              service:
+                name: calendar-service
+                port:
+                  number: 8085
